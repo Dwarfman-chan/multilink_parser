@@ -16,6 +16,7 @@ async def deeplink_scraper(filename):
 
         deeplink_text = [{'url': base_link, 'site_text': main_page},]
 
+        # удалить ограничение или выставить требуемое
         for link in links[0:10]:
             if not link.startswith('http') or not link.startswith('https'):
                 link = urljoin(base_link, link)
