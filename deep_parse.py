@@ -30,7 +30,6 @@ async def deeplink_scraper(filename):
             deeplink_text.append({'url': link, 'site_text': page_text})
         
         deeplink_text = [item for item in deeplink_text if 'Forbidden nginx' not in item.get('site_text')]
-        print(deeplink_text)
 
     domain_name = urlparse(base_link).hostname
     with open(f'deeplink_data/{domain_name}.json', 'w', encoding='utf-8') as file:
