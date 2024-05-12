@@ -26,57 +26,23 @@ HEADER = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 }
 
-async def deeplink_scraper(filename):
-    with open(filename, 'r', encoding='utf-8') as file:
-        data = json.load(file)
+def deeplink_scraper():
+    link = '/ua/'
+    base_link = 'https://art-lemon.com/ua/'
+    if not link.startswith('http') or not link.startswith('https'):
+        link = urljoin(base_link, link)
+    
+    response = requests.get(link, headers=HEADER).text
+    print(response)
+    # soup = BeautifulSoup(response, 'html.parser')
 
-        base_link = data.get('baseURL')
-        main_page = data.get('mainPageText')
-        links = data.get('links')
+    # print(soup)
 
-        deeplink_text = [{'url': base_link, 'site_text': main_page},]
-
-        # удалить ограничение или выставить требуемое
-        for link in links[0:50]:
-            try:
-                if not link.startswith('http') or not link.startswith('https'):
-                    link = urljoin(base_link, link)
-                
-                response = requests.get(link, headers=HEADER).text
-                soup = BeautifulSoup(response, 'html.parser')
-
-                page_text = soup.get_text(separator=' ')
-                page_text = page_text.replace('\n', ' ').replace('\t', ' ').replace('\r', ' ')
-                page_text = re.sub(r'\s+', ' ', page_text)
-
-                deeplink_text.append({'url': link, 'site_text': page_text})
-            except (InvalidSchema, ConnectionError) as e:
-                print(f"Ошибка подключения: {e}")
-                continue
-        
-        # deeplink_text = [item for item in deeplink_text if 'Forbidden nginx' not in item.get('site_text')]
-
-    domain_name = urlparse(base_link).hostname
-    with open(f'deeplink_data/{domain_name}.json', 'w', encoding='utf-8') as file:
-        file.write(json.dumps(deeplink_text, ensure_ascii=False, indent=4))
+    # page_text = soup.get_text(separator=' ')
+    # page_text = page_text.replace('\n', ' ').replace('\t', ' ').replace('\r', ' ')
+    # page_text = re.sub(r'\s+', ' ', page_text)
 
 
-async def main(dir_path, files):
-    tasks = [deeplink_scraper(dir_path+file) for file in files]
-
-    results = await asyncio.gather(*tasks)
-    for result in results:
-        if result:
-            print(result)
 
 
-if __name__ == "__main__":
-    dir_path = 'data/'
-    files = os.listdir(dir_path)
-
-    asyncio.run(main(dir_path, files))
-
-    # for file in files:
-    #     with open(f'{dir_path}/{file}', 'r', encoding='utf-8') as file:
-    #         data = json.load(file)
-    #         print(data)
+deeplink_scraper()
