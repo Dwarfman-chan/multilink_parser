@@ -17,7 +17,7 @@ async def deeplink_scraper(filename):
         deeplink_text = [{'url': base_link, 'site_text': main_page},]
 
         # удалить ограничение или выставить требуемое
-        for link in links[0:10]:
+        for link in links[0:50]:
             if not link.startswith('http') or not link.startswith('https'):
                 link = urljoin(base_link, link)
             
@@ -30,7 +30,7 @@ async def deeplink_scraper(filename):
 
             deeplink_text.append({'url': link, 'site_text': page_text})
         
-        deeplink_text = [item for item in deeplink_text if 'Forbidden nginx' not in item.get('site_text')]
+        # deeplink_text = [item for item in deeplink_text if 'Forbidden nginx' not in item.get('site_text')]
 
     domain_name = urlparse(base_link).hostname
     with open(f'deeplink_data/{domain_name}.json', 'w', encoding='utf-8') as file:
